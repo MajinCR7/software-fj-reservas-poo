@@ -25,7 +25,6 @@ def registrar_log(nivel: str, mensaje: str) -> None:
         with open(ARCHIVO_LOG, "a", encoding="utf-8") as archivo:
             archivo.write(linea)
     except OSError as error_archivo:
-        # Si falla la escritura del log, no detenemos el sistema principal
         print(f"[AVISO LOG] No se pudo escribir en {ARCHIVO_LOG}: {error_archivo}")
 
 
@@ -76,7 +75,6 @@ class Cliente(EntidadSistema):
 
     def __init__(self, id_cliente: str, nombre: str, correo: str, telefono: str) -> None:
         super().__init__(id_cliente)
-        # Se asignan mediante propiedades para ejecutar validaciones estrictas
         self.nombre = nombre
         self.correo = correo
         self.telefono = telefono
@@ -114,7 +112,10 @@ class Cliente(EntidadSistema):
 
     def resumen(self) -> str:
         """Implementación del método abstracto para describir al cliente."""
-        return f"Cliente [{self.id_entidad}] - {self.nombre} | Correo: {self.correo} | Tel: {self.telefono}"
+        return (
+            f"Cliente [{self.id_entidad}] - {self.nombre} | "
+            f"Correo: {self.correo} | Tel: {self.telefono}"
+        )
 
 
 # =====================================================================
@@ -223,10 +224,13 @@ class ReservaSala(Servicio):
         super().__init__(id_servicio, nombre, tarifa_base, disponible)
         if not isinstance(capacidad_personas, int) or capacidad_personas <= 0:
             raise DatoInvalidoError("La capacidad de la sala debe ser un entero positivo.")
-        self.capacidad_personas = capacidad_personas
+        self._capacidad_personas = capacidad_personas
+
+    @property
+    def capacidad_personas(self) -> int:
+        return self._capacidad_personas
 
     def validar_parametros(self, duracion: int) -> None:
-        # La duración en salas se mide en horas (mínimo 1 hora, máximo 12 horas por sesión)
         if not isinstance(duracion, int) or duracion < 1 or duracion > 12:
             raise DatoInvalidoError("La reserva de sala requiere entre 1 y 12 horas.")
 
@@ -234,7 +238,10 @@ class ReservaSala(Servicio):
         return self.tarifa_base * duracion
 
     def describir_servicio(self) -> str:
-        return f"Sala [{self.id_servicio}] '{self.nombre}' (Capacidad: {self.capacidad_personas} personas, Tarifa/h: ${self.tarifa_base:,.2f})"
+        return (
+            f"Sala [{self.id_entidad}] '{self.nombre}' "
+            f"(Capacidad: {self.capacidad_personas} personas, Tarifa/h: ${self.tarifa_base:,.2f})"
+        )
 
 
 class AlquilerEquipo(Servicio):
@@ -251,22 +258,27 @@ class AlquilerEquipo(Servicio):
         super().__init__(id_servicio, nombre, tarifa_base, disponible)
         if not isinstance(tipo_equipo, str) or not tipo_equipo.strip():
             raise DatoInvalidoError("El tipo de equipo es obligatorio.")
-        self.tipo_equipo = tipo_equipo.strip()
+        self._tipo_equipo = tipo_equipo.strip()
+
+    @property
+    def tipo_equipo(self) -> str:
+        return self._tipo_equipo
 
     def validar_parametros(self, duracion: int) -> None:
-        # La duración en alquiler de equipos se mide en días (1 a 30 días)
         if not isinstance(duracion, int) or duracion < 1 or duracion > 30:
             raise DatoInvalidoError("El alquiler de equipo debe ser de 1 a 30 días.")
 
     def calcular_costo_base(self, duracion: int) -> float:
-        # Pequeño descuento automático si el alquiler supera 5 días
         bruto = self.tarifa_base * duracion
         if duracion > 5:
             bruto *= 0.95
         return bruto
 
     def describir_servicio(self) -> str:
-        return f"Equipo [{self.id_servicio}] '{self.nombre}' ({self.tipo_equipo}, Tarifa/día: ${self.tarifa_base:,.2f})"
+        return (
+            f"Equipo [{self.id_entidad}] '{self.nombre}' "
+            f"({self.tipo_equipo}, Tarifa/día: ${self.tarifa_base:,.2f})"
+        )
 
 
 class AsesoriaEspecializada(Servicio):
@@ -283,10 +295,13 @@ class AsesoriaEspecializada(Servicio):
         super().__init__(id_servicio, nombre, tarifa_base, disponible)
         if not isinstance(especialidad, str) or not especialidad.strip():
             raise DatoInvalidoError("La especialidad de la asesoría es obligatoria.")
-        self.especialidad = especialidad.strip()
+        self._especialidad = especialidad.strip()
+
+    @property
+    def especialidad(self) -> str:
+        return self._especialidad
 
     def validar_parametros(self, duracion: int) -> None:
-        # Sesiones de asesoría entre 1 y 8 horas
         if not isinstance(duracion, int) or duracion < 1 or duracion > 8:
             raise DatoInvalidoError("La asesoría especializada admite sesiones de 1 a 8 horas.")
 
@@ -294,7 +309,10 @@ class AsesoriaEspecializada(Servicio):
         return self.tarifa_base * duracion
 
     def describir_servicio(self) -> str:
-        return f"Asesoría [{self.id_servicio}] '{self.nombre}' (Área: {self.especialidad}, Tarifa/h: ${self.tarifa_base:,.2f})"
+        return (
+            f"Asesoría [{self.id_entidad}] '{self.nombre}' "
+            f"(Área: {self.especialidad}, Tarifa/h: ${self.tarifa_base:,.2f})"
+        )
 
 
 # =====================================================================
@@ -303,8 +321,6 @@ class AsesoriaEspecializada(Servicio):
 
 class Reserva:
     """Integra un cliente, un servicio, duración y estado de reserva."""
-
-    ESTADOS_VALIDOS = ("PENDIENTE", "CONFIRMADA", "CANCELADA", "PROCESADA")
 
     def __init__(
         self,
@@ -360,7 +376,6 @@ class Reserva:
             raise OperacionReservaError(
                 f"Solo se pueden procesar reservas CONFIRMADAS. Estado actual de {self.id_reserva}: {self.estado}."
             )
-        # Recalcula por seguridad encadenando excepciones si algo falla
         try:
             self.total_calculado = self.servicio.calcular_costo(
                 duracion=self.duracion,
@@ -436,7 +451,6 @@ class GestorSoftwareFJ:
         except ErrorSoftwareFJ:
             raise
         except Exception as exc:
-            # Encadenamiento explícito de excepciones
             raise OperacionReservaError(f"Error inesperado al crear la reserva '{id_reserva}'.") from exc
 
 
@@ -458,7 +472,6 @@ def ejecutar_operacion(numero: int, descripcion: str, accion) -> None:
         print("[ERROR CONTROLADO]", err_sistema)
         registrar_log("ERROR", mensaje)
     except Exception as err_general:
-        # Encadenamos a excepción del dominio para mantener coherencia en el sistema
         envuelta = OperacionReservaError(f"Fallo no previsto en Op {numero}: {err_general}")
         mensaje = f"Op {numero} ({descripcion}) -> Excepción encadenada: {envuelta} (Causa: {err_general})"
         print("[EXCEPCIÓN ENCADENADA]", mensaje)
@@ -474,35 +487,30 @@ def ejecutar_operacion(numero: int, descripcion: str, accion) -> None:
 
 
 def simular_sistema_software_fj() -> None:
-    """Ejecuta al menos 12 operaciones variadas para probar el sistema completo."""
+    """Ejecuta 12 operaciones variadas para probar el sistema completo."""
     gestor = GestorSoftwareFJ()
     registrar_log("INFO", "Inicio de simulación del sistema Software FJ.")
 
-    # Op 1: Registro válido de cliente
     def op1():
         c1 = Cliente("CLI-01", "Cristian Majin", "cristian@example.com", "3105551234")
         gestor.registrar_cliente(c1)
         return c1.resumen()
 
-    # Op 2: Registro inválido de cliente (correo y teléfono incorrectos)
     def op2():
         c_malo = Cliente("CLI-02", "Ana", "correo_sin_arroba", "123")
         gestor.registrar_cliente(c_malo)
         return c_malo.resumen()
 
-    # Op 3: Segundo cliente válido
     def op3():
         c2 = Cliente("CLI-03", "Dali Velasco", "dali@example.com", "3159876543")
         gestor.registrar_cliente(c2)
         return c2.resumen()
 
-    # Op 4: Creación válida de servicio de ReservaSala
     def op4():
         s1 = ReservaSala("SRV-SALA1", "Sala de Conferencias A", 80000, capacidad_personas=20, disponible=True)
         gestor.registrar_servicio(s1)
         return s1.resumen()
 
-    # Op 5: Creación válida de AlquilerEquipo y AsesoriaEspecializada
     def op5():
         s2 = AlquilerEquipo("SRV-EQ1", "Portátil Empresarial i7", 45000, "Laptop", disponible=True)
         s3 = AsesoriaEspecializada("SRV-ASE1", "Arquitectura Python y POO", 120000, "Backend & POO", disponible=False)
@@ -510,40 +518,33 @@ def simular_sistema_software_fj() -> None:
         gestor.registrar_servicio(s3)
         return f"Registrados: {s2.id_entidad} y {s3.id_entidad} (no disponible)"
 
-    # Op 6: Creación incorrecta de servicio (tarifa negativa / duración inválida)
     def op6():
         s_malo = ReservaSala("SRV-ERR", "Sala Inválida", -5000, capacidad_personas=10)
         gestor.registrar_servicio(s_malo)
         return s_malo.resumen()
 
-    # Op 7: Reserva exitosa con cálculo de costo (descuento e impuesto)
     def op7():
         res1 = gestor.crear_reserva("RES-001", "CLI-01", "SRV-SALA1", duracion=3, descuento_pct=10, impuesto_pct=19)
         res1.confirmar()
         total_cobrado = res1.procesar()
         return f"{res1} | Cobrado: ${total_cobrado:,.2f}"
 
-    # Op 8: Reserva exitosa de alquiler de equipo con método sobrecargado (solo duración)
     def op8():
         res2 = gestor.crear_reserva("RES-002", "CLI-03", "SRV-EQ1", duracion=6)
         res2.confirmar()
         return str(res2)
 
-    # Op 9: Reserva fallida por servicio no disponible
     def op9():
         return str(gestor.crear_reserva("RES-003", "CLI-01", "SRV-ASE1", duracion=2))
 
-    # Op 10: Reserva fallida por duración fuera de rango para sala (20 horas)
     def op10():
         return str(gestor.crear_reserva("RES-004", "CLI-01", "SRV-SALA1", duracion=20))
 
-    # Op 11: Reserva fallida por intentar procesar una reserva cancelada
     def op11():
         res_temp = gestor.crear_reserva("RES-005", "CLI-03", "SRV-EQ1", duracion=2)
         res_temp.cancelar("Cambio de agenda")
         return str(res_temp.procesar())
 
-    # Op 12: Reserva fallida por cliente inexistente
     def op12():
         return str(gestor.crear_reserva("RES-006", "CLI-999", "SRV-EQ1", duracion=1))
 
