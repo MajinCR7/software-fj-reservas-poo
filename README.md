@@ -4,12 +4,8 @@ Curso: Programación (213023) - Universidad Nacional Abierta y Distancia (UNAD)
 
 Fase 4 - Componente práctico - Prácticas simuladas
 
-## Integrantes del grupo
-- Cristian Majin
-- [Nombre integrante 2]
-- [Nombre integrante 3]
-- [Nombre integrante 4]
-- [Nombre integrante 5]
+## Autor
+- Cristian Majin (desarrollo individual del proyecto)
 
 ## Descripción
 Sistema orientado a objetos en Python para la empresa Software FJ. Gestiona clientes, servicios (salas, equipos y asesorías) y reservas, sin base de datos: todo se maneja con objetos y listas en memoria. Los eventos y errores se registran en un archivo de logs, y el programa sigue funcionando aunque ocurran errores.
