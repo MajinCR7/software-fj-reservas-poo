@@ -1,6 +1,6 @@
 # Software FJ - Sistema de Gestión de Clientes, Servicios y Reservas
 
-Curso: Programación (213023) - Universidad Nacional Abierta y a Distancia (UNAD)
+Curso: Programación (213023) - Universidad Nacional Abierta y  a Distancia (UNAD)
 
 Fase 4 - Componente práctico - Prácticas simuladas
 
