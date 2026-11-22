@@ -1,0 +1,39 @@
+[2026-11-22 00:42:47] [INFO] Inicio de simulación del sistema Software FJ.
+[2026-11-22 00:42:47] [INFO] Op 1 (Registro válido de cliente) -> Cliente [CLI-01] - Cristian Majin | Correo: cristian@example.com | Tel: 3105551234
+[2026-11-22 00:42:47] [AUDITORIA] Fin de Operación 1 | Estado: OK
+[2026-11-22 00:42:47] [ERROR] Op 2 (Registro inválido de cliente) -> Error controlado [DatoInvalidoError]: Correo electrónico inválido: 'correo_sin_arroba'.
+[2026-11-22 00:42:47] [AUDITORIA] Fin de Operación 2 | Estado: CON_ERROR_MANEJADO
+[2026-11-22 00:42:47] [INFO] Op 3 (Registro válido de segundo cliente) -> Cliente [CLI-03] - Dali Velasco | Correo: dali@example.com | Tel: 3159876543
+[2026-11-22 00:42:47] [AUDITORIA] Fin de Operación 3 | Estado: OK
+[2026-11-22 00:42:47] [INFO] Op 4 (Creación válida de servicio de sala) -> Sala [SRV-SALA1] 'Sala de Conferencias A' (Capacidad: 20 personas, Tarifa/h: $80,000.00) | Estado: Disponible
+[2026-11-22 00:42:47] [AUDITORIA] Fin de Operación 4 | Estado: OK
+[2026-11-22 00:42:47] [INFO] Op 5 (Creación de servicios de equipo y asesoría) -> Registrados: SRV-EQ1 y SRV-ASE1 (no disponible a propósito)
+[2026-11-22 00:42:47] [AUDITORIA] Fin de Operación 5 | Estado: OK
+[2026-11-22 00:42:47] [ERROR] Op 6 (Creación incorrecta de servicio) -> Error controlado [DatoInvalidoError]: La tarifa base del servicio debe ser mayor que cero.
+[2026-11-22 00:42:47] [AUDITORIA] Fin de Operación 6 | Estado: CON_ERROR_MANEJADO
+[2026-11-22 00:42:47] [INFO] Reserva RES-001 confirmada.
+[2026-11-22 00:42:47] [AUDITORIA] Intento de procesar RES-001. Estado resultante: PROCESADA
+[2026-11-22 00:42:47] [INFO] Op 7 (Reserva exitosa y procesada con descuento e IVA) -> Reserva [RES-001] | Cliente: Cristian Majin | Servicio: Sala de Conferencias A | Duración: 3 horas | Total: $257,040.00 | Estado: PROCESADA | Cobrado: $257,040.00
+[2026-11-22 00:42:47] [AUDITORIA] Fin de Operación 7 | Estado: OK
+[2026-11-22 00:42:47] [INFO] Reserva RES-002 confirmada.
+[2026-11-22 00:42:47] [INFO] Op 8 (Reserva exitosa de alquiler con parámetros por defecto) -> Reserva [RES-002] | Cliente: Dali Velasco | Servicio: Portátil Empresarial i7 | Duración: 6 días | Total: $256,500.00 | Estado: CONFIRMADA (queda confirmada, aún sin procesar)
+[2026-11-22 00:42:47] [AUDITORIA] Fin de Operación 8 | Estado: OK
+[2026-11-22 00:42:47] [ERROR] Op 9 (Reserva fallida por servicio no disponible) -> Error controlado [ServicioNoDisponibleError]: El servicio 'Arquitectura Python y POO' no está disponible actualmente.
+[2026-11-22 00:42:47] [AUDITORIA] Fin de Operación 9 | Estado: CON_ERROR_MANEJADO
+[2026-11-22 00:42:47] [ERROR] Op 10 (Reserva fallida por duración inválida) -> Error controlado [DatoInvalidoError]: La reserva de sala requiere entre 1 y 12 horas.
+[2026-11-22 00:42:47] [AUDITORIA] Fin de Operación 10 | Estado: CON_ERROR_MANEJADO
+[2026-11-22 00:42:47] [INFO] Reserva RES-005 cancelada. Motivo: Cambio de agenda
+[2026-11-22 00:42:47] [ERROR] Op 11 (Reserva fallida al procesar reserva cancelada) -> Error controlado [OperacionReservaError]: Solo se pueden procesar reservas CONFIRMADAS. Estado actual de RES-005: CANCELADA.
+[2026-11-22 00:42:47] [AUDITORIA] Fin de Operación 11 | Estado: CON_ERROR_MANEJADO
+[2026-11-22 00:42:47] [ERROR] Op 12 (Reserva fallida por cliente inexistente) -> Error controlado [DatoInvalidoError]: Cliente con ID 'CLI-999' no encontrado.
+[2026-11-22 00:42:47] [AUDITORIA] Fin de Operación 12 | Estado: CON_ERROR_MANEJADO
+[2026-11-22 00:42:47] [INFO] Reserva RES-007 confirmada.
+[2026-11-22 00:42:47] [INFO] Condiciones ajustadas en RES-007.
+[2026-11-22 00:42:47] [AUDITORIA] Intento de procesar RES-007. Estado resultante: CONFIRMADA
+[2026-11-22 00:42:47] [ERROR] Op 13 (Procesamiento fallido con encadenamiento de excepciones) -> Error controlado [OperacionReservaError]: Fallo al procesar financieramente la reserva RES-007. | Causa original: [CalculoFinancieroError] El descuento debe estar entre 0% y menos del 100%.
+[2026-11-22 00:42:47] [AUDITORIA] Fin de Operación 13 | Estado: CON_ERROR_MANEJADO
+[2026-11-22 00:42:47] [ERROR] Op 14 (Error inesperado encadenado al crear reserva) -> Error controlado [OperacionReservaError]: Error inesperado al crear la reserva 'RES-008'. | Causa original: [AttributeError] 'NoneType' object has no attribute 'strip'
+[2026-11-22 00:42:47] [AUDITORIA] Fin de Operación 14 | Estado: CON_ERROR_MANEJADO
+[2026-11-22 00:42:47] [INFO] Op 15 (Cálculo de costos con variantes sobrecargadas) -> Sala 2h -> base: $160,000.00 | con IVA 19%: $190,400.00 | con descuento 10%: $144,000.00 | completo: $203,490.00
+[2026-11-22 00:42:47] [AUDITORIA] Fin de Operación 15 | Estado: OK
+[2026-11-22 00:42:47] [INFO] Fin de simulación del sistema Software FJ.
